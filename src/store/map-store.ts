@@ -28,6 +28,7 @@ export class MapsStore implements IMapStore {
     return MAP_WIDTH / MAP_CELL_WIDTH
   }
 
+  @computed
   public get grid () {
     return (new Array(this.rows)).fill(undefined)
       .map((_n, i) => i * MAP_CELL_HEIGHT)

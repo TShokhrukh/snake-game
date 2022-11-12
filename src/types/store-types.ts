@@ -6,12 +6,13 @@ export interface IPosition {
 
 export interface ISnakeStore {
   position: IPosition[]
-  move(a: string): void
 
   get head(): IPosition
   get body(): IPosition[]
   get tail(): IPosition
 
+  move(a: string): void
+  setPosition(a: IPosition[]): void
   // grow(): void
   // canMove(a: string): boolean
 }

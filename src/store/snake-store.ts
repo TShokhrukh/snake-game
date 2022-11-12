@@ -28,7 +28,7 @@ export class SnakeStore implements ISnakeStore {
 
   @computed
   public get body (): IPosition[] {
-    return this.position.slice(0, this.position.length - 1)
+    return this.position.slice(1, this.position.length - 1)
   }
 
   @computed
@@ -37,26 +37,31 @@ export class SnakeStore implements ISnakeStore {
   }
 
   @action
-  public move (action: TMoveAction) {
-    if (this.canMove(action)) {
-      return
-    }
+  public move (action: TMoveAction): void {
+    // if (this.canMove(action)) {
+    //   return
+    // }
     
-    this.moveAction = action
+    // this.moveAction = action
 
-    if (this.moveInterval) {
-      clearInterval(this.moveInterval)
-    }
+    // if (this.moveInterval) {
+    //   clearInterval(this.moveInterval)
+    // }
 
-    this.position = this.doMove(action)
-    this.moveInterval = setInterval(() => {
-      this.position = this.doMove(action)
-    }, SnakeStore.MOVE_INTERVAL)
+    // this.position = this.doMove(action)
+    // this.moveInterval = setInterval(() => {
+    //   this.position = this.doMove(action)
+    // }, SnakeStore.MOVE_INTERVAL)
   }
 
   @action
-  public grow () {
-    this.position = [...this.position, { x: 0, y: 0 }]
+  public grow (): void {
+    // this.position = [...this.position, { x: 0, y: 0 }]
+  }
+
+  @action
+  public setPosition (position: IPosition[]): void {    
+    this.position = position
   }
 
   public canMove (action: TMoveAction): boolean {

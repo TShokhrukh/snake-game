@@ -5,6 +5,7 @@ import {
   MAP_CELL_WIDTH,
   MAP_CELL_HEIGHT
 } from '~/constants/map'
+import { BASE_SNAKE_LENGTH } from '~/constants/snake'
 import { IPosition, ISnakeStore, IMapStore } from '~/types'
 import { SnakeStore } from './snake-store'
 
@@ -15,6 +16,7 @@ export class MapsStore implements IMapStore {
   constructor () {
     this.cells = this.fillCells()
     this.snake = new SnakeStore()
+    this.makeStartPosition()
     makeObservable(this)
   }
 
@@ -33,6 +35,11 @@ export class MapsStore implements IMapStore {
     return (new Array(this.rows)).fill(undefined)
       .map((_n, i) => i * MAP_CELL_HEIGHT)
       .map(h => this.cells.filter(p => p.y === h))
+  }
+
+  public makeStartPosition (): void {    
+    const row = this.grid[Math.floor(this.rows/2)].slice(2, BASE_SNAKE_LENGTH + 2).reverse()
+    this.snake.setPosition(row)
   }
 
   private fillCells (): IPosition[] {

@@ -1,31 +1,25 @@
 import React, { useEffect, useRef } from 'react'
-import { IMapStore } from '~/types'
-import { GameCtx } from '~/core/game-ctx'
+// import { IMapStore, TMoveAction } from '~/types'
+import { GameCore } from './ctx/game-core'
 import { MAP_HEIGHT, MAP_WIDTH } from '~/constants/map'
 
-interface IProps {
-  map: IMapStore,
-  canvasNotSupport?: React.ReactNode
-}
+// interface IProps {
+//   snake: any,
+//   map: any,
+// }
 
-export const Game = ({ map }: IProps) => {
+export const Game = () => {
+  const core = new GameCore()
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const ctx = ref.current?.getContext('2d')
-    if (!(ctx instanceof CanvasRenderingContext2D)) {
+    if (!(ctx instanceof CanvasRenderingContext2D) || core.isPlaying) {
       return
-    }
-    const game = new GameCtx(map, map.snake)
-    const id = requestAnimationFrame(() => {
-      game.draw(ctx)
-    })
-    return () => {
-      clearInterval(id)
-    }
+    }    
+    core.start(ctx)
   })
   
-
   return (
     <canvas width={MAP_WIDTH} height={MAP_HEIGHT} ref={ref} />
   )

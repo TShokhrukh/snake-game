@@ -2,7 +2,7 @@ import { MAP_CELL_HEIGHT, MAP_CELL_WIDTH } from '~/constants/map'
 import { ICtx, ICell, ISnake, TMoveAction } from '~/types/index'
 
 export class SnakeCtx implements ICtx, ISnake {
-  private status: 'live'|'die'
+  public status: 'live'|'die'
   private prevMoveAction: TMoveAction|undefined
   position: ICell[]
 
@@ -27,10 +27,11 @@ export class SnakeCtx implements ICtx, ISnake {
     return this.position.length
   }
 
-  public get isDed (): boolean {
-    return false
+  public get isDed (): boolean {    
+    return this.status === 'die'
   }
 
+  @dead
   public grow (): void {
     this.position = this.position.concat({
       y: this.tail.y,
@@ -38,10 +39,8 @@ export class SnakeCtx implements ICtx, ISnake {
     })
   }
 
-  public move (action: TMoveAction): void {  
-    if (!this.canMoveTo(action) && this.prevMoveAction) {
-      action = this.prevMoveAction
-    }
+  @dead
+  public move (action: TMoveAction): void {
     for (let index = this.position.length - 1; index >= 0; index--) {
       const position = this.position[index]
       if (index === 0) {        
@@ -62,8 +61,6 @@ export class SnakeCtx implements ICtx, ISnake {
         continue
       }
       this.position[index] = this.position[index - 1]
-      // position.x = this.position[index - 1].x
-      // position.y = this.position[index - 1].y
     }
 
     this.prevMoveAction = action
@@ -87,6 +84,7 @@ export class SnakeCtx implements ICtx, ISnake {
     this.status = 'die'
   }
 
+  @dead
   public draw (ctx: CanvasRenderingContext2D): void {
     this.drawHead(ctx)
     this.drawBody(ctx)
@@ -114,5 +112,15 @@ export class SnakeCtx implements ICtx, ISnake {
   private drawTail (ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = '#000'
     ctx.fillRect(this.tail.x, this.tail.y, MAP_CELL_WIDTH, MAP_CELL_HEIGHT)
+  }
+}
+
+function dead (target: ISnake, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
+  let method = descriptor.value!  
+  descriptor.value = function (this: ISnake)  {    
+    if (this.isDed) {
+      throw new Error('snake is dead')
+    }
+    return method.apply(this, arguments)
   }
 }

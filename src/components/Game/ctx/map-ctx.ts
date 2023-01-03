@@ -9,22 +9,27 @@ import {
 
 export class MapCtx implements ICtx, IMap {
   cells: ICell[]
+  readonly MAP_HEIGHT = MAP_HEIGHT
+  readonly MAP_WIDTH = MAP_WIDTH
+  readonly MAP_CELL_HEIGHT = MAP_CELL_HEIGHT
+  readonly MAP_CELL_WIDTH = MAP_CELL_WIDTH
 
   constructor () {
     this.cells = this.fillCells()
   }
 
+
   public get rows (): number {
-    return MAP_HEIGHT / MAP_CELL_HEIGHT
+    return MAP_HEIGHT / this.MAP_CELL_HEIGHT
   }
 
   public get columns (): number {
-    return MAP_WIDTH / MAP_CELL_WIDTH
+    return MAP_WIDTH / this.MAP_CELL_WIDTH
   }
 
   public get grid (): (ICell[])[] {
     return (new Array(this.rows)).fill(undefined)
-      .map((_n, i) => i * MAP_CELL_HEIGHT)
+      .map((_n, i) => i * this.MAP_CELL_HEIGHT)
       .map(h => this.cells.filter(p => p.y === h))
   }
 
@@ -32,7 +37,7 @@ export class MapCtx implements ICtx, IMap {
     this.grid.forEach((row, i) => {
       row.forEach((p, n) => {
         ctx.fillStyle = this.fillColor(i, n)
-        ctx.fillRect(p.x, p.y, MAP_CELL_WIDTH, MAP_CELL_HEIGHT)
+        ctx.fillRect(p.x, p.y, this.MAP_CELL_WIDTH, this.MAP_CELL_HEIGHT)
       })
     })
   }
@@ -44,7 +49,7 @@ export class MapCtx implements ICtx, IMap {
       .map(y => {
         return (new Array(this.columns))
           .fill(undefined)
-          .map((_n, i) => i * MAP_CELL_WIDTH)
+          .map((_n, i) => i * this.MAP_CELL_WIDTH)
           .map(x => ({ y, x }))
       })
       .reduce((prev, arr) => [...prev, ...arr], [])

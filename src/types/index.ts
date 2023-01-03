@@ -7,6 +7,10 @@ export interface ICell {
 }
 
 export interface IMap {
+  readonly MAP_HEIGHT: number
+  readonly MAP_WIDTH: number
+  readonly MAP_CELL_HEIGHT: number
+  readonly MAP_CELL_WIDTH: number
   cells: ICell[]
 
   rows: number

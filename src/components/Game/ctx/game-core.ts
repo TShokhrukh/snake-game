@@ -40,16 +40,7 @@ export class GameCore implements IGame {
     this.draw(ctx)
     document.addEventListener('keydown', this.onKeyDown)
 
-    this.intervalId = setInterval(() => {
-      if (this.moveAction) {
-        this.snake.move(this.moveAction)
-      }
-      if (comparePositions(this.food.position, this.snake.head)) {
-        this.food.setPosition(this.getFoodPosition())
-        this.snake.grow()
-      }
-      this.draw(ctx)
-    }, this.interval)
+    this.intervalId = setInterval(this.cycle, this.interval, ctx)
   }
 
   public restart () {
@@ -60,6 +51,26 @@ export class GameCore implements IGame {
   public stop () {
     document.removeEventListener('keydown', this.onKeyDown)
     clearInterval(this.intervalId)
+  }
+
+  private cycle = (ctx: CanvasRenderingContext2D): void => {
+    if (this.snake.isDed) {
+      return
+    }
+    if (this.moveAction) {
+      this.snake.move(this.moveAction)
+    }
+    if (comparePositions(this.food.position, this.snake.head)) {
+      this.food.setPosition(this.getFoodPosition())
+      this.snake.grow()
+    }
+    if (
+      this.snake.head.x >= this.map.MAP_WIDTH || this.snake.head.x <= 0 ||
+      this.snake.head.y >= this.map.MAP_HEIGHT || this.snake.head.y <= 0
+    ) {      
+      this.snake.die()
+    }
+    this.draw(ctx)
   }
 
   private draw (ctx: CanvasRenderingContext2D): void {
@@ -85,13 +96,11 @@ export class GameCore implements IGame {
     return position
   }
 
-  private onKeyDown = (event: KeyboardEvent) => {
-    if (!(event.code in KEYBOARD_MOVE_ACTIONS)) {
+  private onKeyDown = (event: KeyboardEvent): void => {
+    const action: TMoveAction|undefined = KEYBOARD_MOVE_ACTIONS[event.code]
+    if (!action || !this.snake.canMoveTo(action)) {
       return
-    }
-    
-    const action: TMoveAction = KEYBOARD_MOVE_ACTIONS[event.code]
-    // this.snake.move(action)
+    }    
     this.moveAction = action
   }
 }

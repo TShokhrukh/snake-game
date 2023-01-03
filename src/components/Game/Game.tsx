@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 // import { IMapStore, TMoveAction } from '~/types'
 import { GameCore } from './ctx/game-core'
 import { MAP_HEIGHT, MAP_WIDTH } from '~/constants/map'
+import { IGame } from '~/types'
 
 // interface IProps {
 //   snake: any,
@@ -9,7 +10,7 @@ import { MAP_HEIGHT, MAP_WIDTH } from '~/constants/map'
 // }
 
 export const Game = () => {
-  const core = new GameCore()
+  const [core] = useState<IGame>(() => new GameCore())
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
